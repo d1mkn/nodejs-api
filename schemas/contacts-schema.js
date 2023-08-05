@@ -4,15 +4,13 @@ const contactAddSchema = Joi.object({
   name: Joi.string().required().messages({
     "any.required": `missing required "name" field`,
   }),
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .required()
-    .messages({
-      "any.required": `"missing required "email" field`,
-    }),
-  phone: Joi.number().required().messages({
+  email: Joi.string().email({ minDomainSegments: 2 }).required().messages({
+    "any.required": `"missing required "email" field`,
+  }),
+  phone: Joi.string().required().messages({
     "any.required": `missing required "phone" field`,
   }),
+  favorite: Joi.boolean(),
 });
 
 const contactUpdateSchema = Joi.object({
@@ -20,13 +18,19 @@ const contactUpdateSchema = Joi.object({
 
   email: Joi.string().email({
     minDomainSegments: 2,
-    tlds: { allow: ["com", "net"] },
   }),
 
   phone: Joi.string(),
 });
 
+const contactUpdateStatus = Joi.object({
+  favorite: Joi.boolean().required().messages({
+    "any.required": 'missing field "favorite"',
+  }),
+});
+
 export default {
   contactAddSchema,
   contactUpdateSchema,
+  contactUpdateStatus,
 };
