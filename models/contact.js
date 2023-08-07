@@ -3,6 +3,10 @@ import { handleSaveError, handleUpdateValidate } from "./hooks.js";
 
 const contactSchema = new Schema(
   {
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
     name: {
       type: String,
       required: [true, 'Set "name" for contact'],
@@ -32,4 +36,4 @@ contactSchema.post("save", handleSaveError);
 
 const Contact = model("contact", contactSchema);
 
-export default { Contact };
+export default Contact;
