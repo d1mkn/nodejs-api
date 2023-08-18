@@ -4,6 +4,7 @@ import { isEmptyBody } from "../../middlewares/index.js";
 import { validateBody } from "../../decorators/index.js";
 import { usersSchema } from "../../schemas/index.js";
 import { authenticate } from "../../middlewares/index.js";
+import { uploadAvatar } from "../../middlewares/index.js";
 
 const authRouter = express.Router();
 
@@ -24,5 +25,12 @@ authRouter.post(
 authRouter.get("/current", authenticate, usersController.getCurrentUser);
 
 authRouter.post("/logout", authenticate, usersController.logoutUser);
+
+authRouter.patch(
+  "/avatars",
+  authenticate,
+  uploadAvatar.single("avatar"),
+  usersController.updateAvatar
+);
 
 export default authRouter;
