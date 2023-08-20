@@ -1,7 +1,11 @@
 import bcrypt from "bcryptjs";
 import gravatar from "gravatar";
+import { nanoid } from "nanoid";
+import "dotenv/config";
 import { User } from "../../models/index.js";
-import { HttpError } from "../../helpers/index.js";
+import { HttpError, sendEmail } from "../../helpers/index.js";
+
+const { BASE_URL } = process.env;
 
 const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -13,13 +17,23 @@ const registerUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const avatarURL = gravatar.url(email);
-  console.log(gravatar.url());
+
+  const verificationToken = nanoid();
 
   const newUser = await User.create({
     ...req.body,
     password: hashedPassword,
     avatarURL,
+    verificationToken,
   });
+
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a href='${BASE_URL}/api/users/verify/${verificationToken}' target='_blank'>Click here to verify email</a>`,
+  };
+
+  await sendEmail(verifyEmail);
 
   res.status(201).json({
     user: {
